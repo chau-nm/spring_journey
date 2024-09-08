@@ -22,6 +22,7 @@ public class AuthController {
 
   @GetMapping("/hello")
   public String sayHello() {
+    System.out.println("Hello");
     return "Hello";
   }
 }
