@@ -1,6 +1,10 @@
 package com.app.spring_journey.lib;
 
-import javax.crypto.SecretKey;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -13,10 +17,15 @@ public class JWTToken {
   @Autowired
   KeyLocator keyLocator;
 	
-  public String encrypt(String plaintext) {
-    SecretKey key = Jwts.SIG.HS256.key().build();
+  public String encrypt(String plaintext) throws NoSuchAlgorithmException {
+    KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+    keyPairGenerator.initialize(2048);
+    KeyPair keyPair = keyPairGenerator.generateKeyPair();
+    PublicKey pubKey = keyPair.getPublic();
+    PrivateKey priKey = keyPair.getPrivate();
     String keyId = "keyid";
-    keyLocator.addKey(keyId, key);
+
+    keyLocator.addKey(keyId, priKey);
     return Jwts.builder()
       .subject(plaintext)
 
@@ -24,7 +33,7 @@ public class JWTToken {
       .keyId(keyId)
       .and()
 
-      .signWith(key)
+      .encryptWith(pubKey, Jwts.KEY.RSA1_5, Jwts.ENC.A256GCM)
       
       .compact();
   }

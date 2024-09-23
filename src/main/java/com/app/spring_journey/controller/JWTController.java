@@ -1,5 +1,7 @@
 package com.app.spring_journey.controller;
 
+import java.security.NoSuchAlgorithmException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,7 +18,7 @@ public class JWTController {
   private JWTToken jwt;
   
   @GetMapping("/encrypt")
-  public String encrypt(@RequestParam String plaintext) {
+  public String encrypt(@RequestParam String plaintext) throws NoSuchAlgorithmException {
     return jwt.encrypt(plaintext);
   }
 
